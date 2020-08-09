@@ -1,0 +1,2 @@
+FLASK_APP=pma.py
+FLASK_DEBUG=1

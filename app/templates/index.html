@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    {% for project in projects %}
+    <div>
+        {% include "_project_snippet.html" %}
+    </div>
+    {% endfor %}
+    <hr>
+    <a href="{{ url_for('new_project') }}">New Project</a>
+{% endblock %}
