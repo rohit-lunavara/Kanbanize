@@ -1,6 +1,40 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>Project Stub</h1>
-    <b>{{ project.name }}</b>: {{ project.description }}
+    <a href="{{ url_for('edit_project', project_id = project.id) }}">
+        <h1>
+            <b>{{ project.name }}</b>
+        </h1>
+    </a>
+    <p>
+        <h3>
+            {{ project.description }}
+        </h3>
+    </p>
+    <hr>
+    {% for tasklist in project.tasklists %}
+        <a href="{{ url_for('edit_tasklist', project_id = project.id, tasklist_id = tasklist.id) }}">
+            <h3>{{ tasklist.name }}</h3>
+        </a>
+        <!-- Task List description -->
+        {% for task in tasklist.tasks %}
+            <a href="{{ url_for('edit_task', project_id = project.id, tasklist_id = tasklist.id, task_id = task.id) }}">
+                <h5>{{ task.name }}</h5>
+            </a>
+            <!-- Task description -->
+        {% endfor %}
+        <p>
+            <a href="{{ url_for('new_task', project_id = project.id, tasklist_id = tasklist.id) }}">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                New Task
+            </a>
+        </p>
+        <hr>
+    {% endfor %}
+    <p>
+        <a href="{{ url_for('new_tasklist', project_id = project.id) }}">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            New Task List
+        </a>
+    </p>
 {% endblock %}

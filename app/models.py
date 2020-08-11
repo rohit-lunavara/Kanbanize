@@ -1,11 +1,14 @@
 from datetime import datetime
-from app import db, login
+from app import app, db, login
 # Secure Password
 from werkzeug.security import generate_password_hash, check_password_hash
 # Login
 from flask_login import UserMixin
 # Avatar
 from hashlib import md5
+# Reset Password
+from time import time
+import jwt
 
 UserProjects = db.Table("UserProjects",
     db.Column("user_id", db.Integer, db.ForeignKey('User.id')),
@@ -79,8 +82,26 @@ class User(UserMixin, db.Model) :
         return "https://www.gravatar.com/avatar/{}?d=identicon&s={}".format(digest, size)
 
     # Projects
-    def is_in_project(self, project) :
-        return self.projects.filter(UserProjects.c.project_id == project.id).count() > 0
+    def is_in_project(self, project_id) :
+        return self.projects.filter(UserProjects.c.project_id == project_id).count() > 0
+
+    # Reset Password
+    def get_reset_password_token(self, expires_in = 600):
+        return jwt.encode(
+            {
+                'reset_password' : self.id,
+                'exp' : time() + expires_in
+            },
+            app.config['SECRET_KEY'], algorithm = 'HS256'
+        ).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'], algorithms = ['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
 
 class Project(db.Model) : 
     __tablename__ = 'Project'
