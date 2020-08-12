@@ -5,7 +5,7 @@
         <tr>
             <td width="256px"><img src="{{ user.avatar(256) }}"></td>
             <td>
-                <h1>User: {{ user.username }}</h1>
+                <h1>{{ user.username }}</h1>
                 {% if user.about_me %}
                     <p>{{ user.about_me }}</p>
                 {% endif %}
@@ -13,7 +13,31 @@
                     <p>Last seen on: {{ moment(user.last_seen).format('LLL') }}</p>
                 {% endif %}
                 {% if user == current_user %}
-                    <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+                    <button type="button" class="btn btn-primary" onclick='window.location.href="{{ url_for('edit_profile', username = user.username) }}"'>Edit your profile</button>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+                        Delete Profile
+                    </button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Delete Project</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            Are you sure?
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick='window.location.href="{{ url_for('delete_profile', username = user.username) }}"'>Confirm</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
                 {% endif %}
             </td>
         </tr>
