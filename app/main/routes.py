@@ -173,7 +173,7 @@ def edit_task(project_id, tasklist_id, task_id) :
         else :
             form.name.data = task.name
             form.description.data = task.description
-        return render_template('edit_task.html', form = form)
+        return render_template('edit_task.html', form = form, project_id = project_id, tasklist_id = tasklist_id, task_id = task_id)
     else :
         flash("You cannot edit the task for this project.")
         return redirect(url_for('index'))
