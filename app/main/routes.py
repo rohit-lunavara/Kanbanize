@@ -11,12 +11,16 @@ from werkzeug.urls import url_parse
 # Last Seen
 # from datetime import datetime
 
+# Project Directory
+
 @app.route('/')
 @app.route('/index')
 @login_required
 def index() :
     projects = current_user.projects.all()
     return render_template('index.html', title = "Home", projects = projects)
+
+# Project Main
 
 @app.route('/project/<int:project_id>')
 @login_required
@@ -28,7 +32,9 @@ def project(project_id) :
         flash("You cannot access this project.")
         return redirect(url_for('index'))
 
-@app.route('/new_project', methods = ["GET", "POST"])
+# Project
+
+@app.route('/new/project', methods = ["GET", "POST"])
 @login_required
 def new_project() :
     form = NewComponentForm()
@@ -41,7 +47,7 @@ def new_project() :
         return redirect(url_for('index'))
     return render_template('new_project.html', form = form)
 
-@app.route('/edit_project/<int:project_id>', methods = ["GET", "POST"])
+@app.route('/edit/project/<int:project_id>', methods = ["GET", "POST"])
 @login_required
 def edit_project(project_id) :
     form = NewComponentForm()
@@ -56,12 +62,27 @@ def edit_project(project_id) :
         else :
             form.name.data = project.name
             form.description.data = project.description
-        return render_template('edit_project.html', form = form)
+        return render_template('edit_project.html', form = form, project_id = project_id)
     else :
         flash("You cannot edit this project.")
         return redirect(url_for('index'))
 
-@app.route('/new_tasklist/<int:project_id>', methods = ["GET", "POST"])
+@app.route('/delete/project/<int:project_id>', methods = ["GET", "POST"])
+@login_required
+def delete_project(project_id) :
+    # Check if current user is in the project
+    if current_user.is_in_project(project_id) :
+        project = Project.query.filter_by(id = project_id).first_or_404()
+        flash("Deleted Project - \"{}\"".format(project.name))
+        db.session.delete(project)
+        db.session.commit()
+    else :
+        flash("You cannot delete this project.")
+    return redirect(url_for('index'))
+
+# TaskList
+
+@app.route('/new/tasklist/<int:project_id>', methods = ["GET", "POST"])
 @login_required
 def new_tasklist(project_id) :
     form = NewComponentForm()
@@ -80,7 +101,7 @@ def new_tasklist(project_id) :
             return redirect(url_for('index'))
     return render_template('new_tasklist.html', form = form)
 
-@app.route('/edit_tasklist/<int:project_id>/<int:tasklist_id>', methods = ["GET", "POST"])
+@app.route('/edit/project/<int:project_id>/tasklist/<int:tasklist_id>', methods = ["GET", "POST"])
 @login_required
 def edit_tasklist(project_id, tasklist_id) :
     form = NewComponentForm()
@@ -96,12 +117,27 @@ def edit_tasklist(project_id, tasklist_id) :
         else :
             form.name.data = tasklist.name
             form.description.data = tasklist.description
-        return render_template('edit_tasklist.html', form = form)
+        return render_template('edit_tasklist.html', form = form, project_id = project_id, tasklist_id = tasklist_id)
     else :
         flash("You cannot edit the task list for this project.")
         return redirect(url_for('index'))
 
-@app.route('/new_task/<int:project_id>/<int:tasklist_id>', methods = ["GET", "POST"])
+@app.route('/delete/project/<int:project_id>/tasklist/<int:tasklist_id>', methods = ["GET", "POST"])
+@login_required
+def delete_tasklist(project_id, tasklist_id) :
+    tasklist = TaskList.query.filter_by(id = tasklist_id).first_or_404()
+    # Check if current user and the task list is in the project 
+    if current_user.is_in_project(project_id) and tasklist.project_id == project_id :
+        flash("Deleted Task List - \"{}\"".format(tasklist.name))
+        db.session.delete(tasklist)
+        db.session.commit()
+    else :
+        flash("You cannot delete the task list for this project.")
+    return redirect(url_for('project', project_id = project_id))
+
+# Task
+
+@app.route('/new/project/<int:project_id>/tasklist/<int:tasklist_id>', methods = ["GET", "POST"])
 @login_required
 def new_task(project_id, tasklist_id) :
     form = NewComponentForm()
@@ -120,7 +156,7 @@ def new_task(project_id, tasklist_id) :
             return redirect(url_for('index'))
     return render_template('new_task.html', form = form)
 
-@app.route('/edit_task/<int:project_id>/<int:tasklist_id>/<int:task_id>', methods = ["GET", "POST"])
+@app.route('/edit/project/<int:project_id>/tasklist/<int:tasklist_id>/task/<int:task_id>', methods = ["GET", "POST"])
 @login_required
 def edit_task(project_id, tasklist_id, task_id) :
     form = NewComponentForm()
@@ -141,3 +177,17 @@ def edit_task(project_id, tasklist_id, task_id) :
     else :
         flash("You cannot edit the task for this project.")
         return redirect(url_for('index'))
+
+@app.route('/delete/project/<int:project_id>/tasklist/<int:tasklist_id>/task/<int:task_id>', methods = ["GET", "POST"])
+@login_required
+def delete_task(project_id, tasklist_id, task_id) :
+    tasklist = TaskList.query.filter_by(id = tasklist_id).first_or_404()
+    task = Task.query.filter_by(id = task_id).first_or_404()
+    # Check if current user, task list and task is in the project 
+    if current_user.is_in_project(project_id) and tasklist.project_id == project_id and task.tasklist_id == tasklist_id :
+        flash("Deleted Task - \"{}\"".format(task.name))
+        db.session.delete(task)
+        db.session.commit()
+    else :
+        flash("You cannot delete the task list for this project.")
+    return redirect(url_for('project', project_id = project_id))

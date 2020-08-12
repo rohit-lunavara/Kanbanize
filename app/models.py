@@ -34,8 +34,9 @@ class Task(db.Model) :
     is_complete = db.Column(db.Boolean, default = False)
     durations = db.relationship(
         "TaskLog",
-        backref = "task",
-        lazy = "dynamic"
+        backref = db.backref("task"),
+        lazy = "dynamic",
+        cascade = "all,delete"
     )
 
     def __repr__(self) :
@@ -49,8 +50,9 @@ class TaskList(db.Model) :
     project_id = db.Column(db.Integer, db.ForeignKey("Project.id"))
     tasks = db.relationship(
         "Task",
-        backref = "tasklist",
-        lazy = "dynamic"
+        backref = db.backref("tasklist"),
+        lazy = "dynamic",
+        cascade = "all,delete"
     )
 
     def __repr__(self) :
@@ -113,13 +115,16 @@ class Project(db.Model) :
         secondary = UserProjects, 
         primaryjoin = (UserProjects.c.project_id == id), 
         secondaryjoin = (UserProjects.c.user_id == User.id), 
-        backref = db.backref("projects", lazy = "dynamic"),
-        lazy = "dynamic"
+        # Deletes the projects backref instead of the members backref
+        # If members backref is deleted, then the user is deleted as well
+        backref = db.backref("projects", lazy = "dynamic", cascade = "all,delete"),
+        lazy = "dynamic",
     )
     tasklists = db.relationship(
         "TaskList",
-        backref = "project",
-        lazy = "dynamic"
+        backref = db.backref("project"),
+        lazy = "dynamic",
+        cascade = "all,delete"
     )
 
     def __repr__(self) :

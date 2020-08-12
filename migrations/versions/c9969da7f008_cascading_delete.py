@@ -1,8 +1,8 @@
-"""Initial Schema
+"""Cascading delete
 
-Revision ID: 36397403a4ab
+Revision ID: c9969da7f008
 Revises: 
-Create Date: 2020-08-09 02:55:03.952946
+Create Date: 2020-08-12 15:38:28.453190
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '36397403a4ab'
+revision = 'c9969da7f008'
 down_revision = None
 branch_labels = None
 depends_on = None
