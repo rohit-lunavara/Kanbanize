@@ -18,6 +18,7 @@ UserProjects = db.Table("UserProjects",
 class TaskLog(db.Model) :
     __tablename__ = 'TaskLog'
     id = db.Column(db.Integer, primary_key = True)
+    note = db.Column(db.String(128))
     start_time = db.Column(db.DateTime, nullable = False)
     end_time = db.Column(db.DateTime, nullable = False)
     task_id = db.Column(db.Integer, db.ForeignKey("Task.id"))
@@ -56,7 +57,7 @@ class TaskList(db.Model) :
     )
 
     def __repr__(self) :
-        return "<TaskList {}, {}>".format(self.id, self.name)
+        return "{}".format(self.name)
 
 
 class User(UserMixin, db.Model) :
