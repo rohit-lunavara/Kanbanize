@@ -2,17 +2,17 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <a href="{{ url_for('edit_project', project_id = project_id) }}">
+    <a href="{{ url_for('main.edit_project', project_id = project_id) }}">
         <h1>
             <b>{{ project_name }}</b>
         </h1>
     </a>
-    <a href="{{ url_for('edit_tasklist', project_id = project_id, tasklist_id = tasklist_id) }}">
+    <a href="{{ url_for('main.edit_tasklist', project_id = project_id, tasklist_id = tasklist_id) }}">
         <h2>
             <b>{{ tasklist_name }}</b>
         </h2>
     </a>
-    <a href="{{ url_for('edit_task', project_id = project_id, tasklist_id = tasklist_id, task_id = task_id) }}">
+    <a href="{{ url_for('main.edit_task', project_id = project_id, tasklist_id = tasklist_id, task_id = task_id) }}">
         <h3>
             <b>{{ task_name }}</b>
         </h3>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick='window.location.href="{{ url_for('delete_tasklog', project_id = project_id, tasklist_id = tasklist_id, task_id = task_id, tasklog_id = tasklog_id) }}"'>Confirm</button>
+                <button type="button" class="btn btn-primary" onclick='window.location.href="{{ url_for('main.delete_tasklog', project_id = project_id, tasklist_id = tasklist_id, task_id = task_id, tasklog_id = tasklog_id) }}"'>Confirm</button>
                 </div>
             </div>
             </div>

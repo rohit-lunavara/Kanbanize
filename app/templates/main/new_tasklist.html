@@ -2,7 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <a href="{{ url_for('edit_project', project_id = project_id) }}">
+    <a href="{{ url_for('main.edit_project', project_id = project_id) }}">
         <h1>
             <b>{{ project_name }}</b>
         </h1>

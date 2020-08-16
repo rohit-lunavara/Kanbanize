@@ -6,7 +6,7 @@
         <hr>
         <h3>
             <p>
-                <a href="{{ url_for('project', project_id = project.id) }}">
+                <a href="{{ url_for('main.project', project_id = project.id) }}">
                     <b>{{ project.name }}</b>
                 </a> : {{ project.description }}
             </p>
@@ -14,7 +14,7 @@
     {% endfor %}
     <hr>
     <p>
-        <a href="{{ url_for('new_project') }}">
+        <a href="{{ url_for('main.new_project') }}">
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
             New Project
         </a>

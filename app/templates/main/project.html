@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <a href="{{ url_for('edit_project', project_id = project.id) }}">
+    <a href="{{ url_for('main.edit_project', project_id = project.id) }}">
         <h1>
             <b>{{ project.name }}</b>
         </h1>
@@ -13,18 +13,18 @@
     </p>
     <hr>
     {% for tasklist in project.tasklists %}
-        <a href="{{ url_for('edit_tasklist', project_id = project.id, tasklist_id = tasklist.id) }}">
+        <a href="{{ url_for('main.edit_tasklist', project_id = project.id, tasklist_id = tasklist.id) }}">
             <h3>{{ tasklist.name }}</h3>
         </a>
         <!-- Task List description -->
         {% for task in tasklist.tasks %}
-            <a href="{{ url_for('edit_task', project_id = project.id, tasklist_id = tasklist.id, task_id = task.id) }}">
+            <a href="{{ url_for('main.edit_task', project_id = project.id, tasklist_id = tasklist.id, task_id = task.id) }}">
                 <h5>{{ task.name }}</h5>
             </a>
             <!-- Task description -->
         {% endfor %}
         <p>
-            <a href="{{ url_for('new_task', project_id = project.id, tasklist_id = tasklist.id) }}">
+            <a href="{{ url_for('main.new_task', project_id = project.id, tasklist_id = tasklist.id) }}">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 New Task
             </a>
@@ -32,7 +32,7 @@
         <hr>
     {% endfor %}
     <p>
-        <a href="{{ url_for('new_tasklist', project_id = project.id) }}">
+        <a href="{{ url_for('main.new_tasklist', project_id = project.id) }}">
             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
             New Task List
         </a>
