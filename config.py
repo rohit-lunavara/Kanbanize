@@ -16,3 +16,6 @@ class Config(object) :
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['rohit.lunavara@gmail.com']
+
+    # Bootstrap
+    BOOTSTRAP_SERVE_LOCAL = True

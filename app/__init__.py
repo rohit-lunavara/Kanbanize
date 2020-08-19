@@ -6,7 +6,6 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
-from app.visualization.routes import dash_app
 
 # Logging
 import os
@@ -21,7 +20,6 @@ login.login_message = "Please sign in to access this page."
 mail = Mail()
 bootstrap = Bootstrap()
 moment = Moment()
-dash = dash_app()
 
 def create_app(config_class = Config) :
     app = Flask(__name__)
@@ -33,54 +31,67 @@ def create_app(config_class = Config) :
     mail.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
-    dash.init_app(app)
 
-    from app.auth import bp as auth_bp
-    app.register_blueprint(auth_bp, url_prefix = "/auth")
+    with app.app_context() :
 
-    from app.profile import bp as profile_bp
-    app.register_blueprint(profile_bp, url_prefix = "/profile")
+        # Authentication Blueprint
+        from app.auth import bp as auth_bp
+        app.register_blueprint(auth_bp, url_prefix = "/auth")
 
-    from app.errors import bp as errors_bp
-    app.register_blueprint(errors_bp, url_prefix = "/error")
+        # Profile Blueprint
+        from app.profile import bp as profile_bp
+        app.register_blueprint(profile_bp, url_prefix = "/profile")
 
-    from app.main import bp as main_bp
-    app.register_blueprint(main_bp)
+        # Errors Blueprint
+        from app.errors import bp as errors_bp
+        app.register_blueprint(errors_bp, url_prefix = "/error")
 
-    from app import models
+        # Dash Blueprint
+        from app.visualization import bp as viz_bp
+        app.register_blueprint(viz_bp, url_prefix = "/visualization")
 
-    if not app.debug :
-        if app.config["MAIL_SERVER"] :
-            auth = None
-            if app.config["MAIL_USERNAME"] and app.config["MAIL_PASSWORD"] :
-                auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-            secure = None
-            if app.config['MAIL_USE_TLS']:
-                secure = ()
-            mail_handler = SMTPHandler(
-                mailhost = (app.config['MAIL_SERVER'], 
-                app.config['MAIL_PORT']),
-                fromaddr = 'no-reply@' + app.config['MAIL_SERVER'],
-                toaddrs = app.config['ADMINS'],
-                subject = 'PMA Failure',
-                credentials = auth,
-                secure = secure
+        # Main Blueprint
+        from app.main import bp as main_bp
+        app.register_blueprint(main_bp)
+
+        # Dash
+        from dashboard.dash import create_dashboard
+        app = create_dashboard(app)
+
+        from app import models
+
+        if not app.debug :
+            if app.config["MAIL_SERVER"] :
+                auth = None
+                if app.config["MAIL_USERNAME"] and app.config["MAIL_PASSWORD"] :
+                    auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+                secure = None
+                if app.config['MAIL_USE_TLS']:
+                    secure = ()
+                mail_handler = SMTPHandler(
+                    mailhost = (app.config['MAIL_SERVER'], 
+                    app.config['MAIL_PORT']),
+                    fromaddr = 'no-reply@' + app.config['MAIL_SERVER'],
+                    toaddrs = app.config['ADMINS'],
+                    subject = 'PMA Failure',
+                    credentials = auth,
+                    secure = secure
+                )
+                mail_handler.setLevel(logging.ERROR)
+                app.logger.addHandler(mail_handler)
+
+            if not os.path.exists('logs') :
+                os.mkdir('logs')
+            file_handler = RotatingFileHandler('logs/pma.log', maxBytes = 10240, backupCount = 10)
+            file_handler.setFormatter(
+                logging.Formatter(
+                    '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+                )
             )
-            mail_handler.setLevel(logging.ERROR)
-            app.logger.addHandler(mail_handler)
+            file_handler.setLevel(logging.INFO)
+            app.logger.addHandler(file_handler)
 
-        if not os.path.exists('logs') :
-            os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/pma.log', maxBytes = 10240, backupCount = 10)
-        file_handler.setFormatter(
-            logging.Formatter(
-                '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
-            )
-        )
-        file_handler.setLevel(logging.INFO)
-        app.logger.addHandler(file_handler)
+            app.logger.setLevel(logging.INFO)
+            app.logger.info('PMA startup')
 
-        app.logger.setLevel(logging.INFO)
-        app.logger.info('PMA startup')
-
-    return app
+        return app
