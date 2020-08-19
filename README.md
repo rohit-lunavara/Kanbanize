@@ -1,0 +1,14 @@
+# Kanbanize
+A visual workflow project management system with a Kanban structure
+
+- Implemented ability to add multiple projects and tasks with time logs to build and track a real-world project
+- Created a complete authentication system for sign up, registration and resetting passwords securely
+- Users can view visualizations made using Dash and Plotly to gain insights on time spent on individual tasks and overall time spent on the project
+- Realized the Database in SQL utilizing lazy loading for efficiency with complete Unit Test coverage
+
+## Pending
+
+- Multiple team members can collaborate on a project
+- Different roles within a project
+- Drag and drop cards
+- Build API which can be consumed by an mobile app (iOS)
