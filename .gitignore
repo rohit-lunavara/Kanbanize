@@ -1,5 +1,7 @@
-# Database
+# Application specific
 app.db
+*.svg
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

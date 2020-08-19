@@ -176,10 +176,7 @@ def init_callbacks(dash_app) :
         project = Project.query.filter_by(id = project_id).first()
         tasklogs = retrieve_tasklogs(project)
 
-        # For each task, calculate and store the duration along with start_time.date()
-        for tasklog in tasklogs :
-            print(f"{tasklog.id}, {tasklog.start_time} - {tasklog.end_time}, TASK : {tasklog.task}")
-
+        # For each task, calculate and store the duration along with start date
         res = pd.DataFrame(
             {
                 "Index" : [ tasklog.task_id for tasklog in tasklogs ],
@@ -222,10 +219,14 @@ def init_callbacks(dash_app) :
 def retrieve_tasklogs(project) :
     if project is None : 
         raise PreventUpdate
+
     tasklogs = []
     for tasklist in project.tasklists :
         for task in tasklist.tasks :
             for tasklog in task.durations :
                 tasklogs.append(tasklog)
+
+    if tasklogs == [] :
+        raise PreventUpdate
 
     return tasklogs

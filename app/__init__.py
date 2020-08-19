@@ -73,7 +73,7 @@ def create_app(config_class = Config) :
                     app.config['MAIL_PORT']),
                     fromaddr = 'no-reply@' + app.config['MAIL_SERVER'],
                     toaddrs = app.config['ADMINS'],
-                    subject = 'PMA Failure',
+                    subject = 'Kanbanize Failure',
                     credentials = auth,
                     secure = secure
                 )
@@ -82,7 +82,7 @@ def create_app(config_class = Config) :
 
             if not os.path.exists('logs') :
                 os.mkdir('logs')
-            file_handler = RotatingFileHandler('logs/pma.log', maxBytes = 10240, backupCount = 10)
+            file_handler = RotatingFileHandler('logs/kanbanize.log', maxBytes = 10240, backupCount = 10)
             file_handler.setFormatter(
                 logging.Formatter(
                     '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
@@ -92,6 +92,6 @@ def create_app(config_class = Config) :
             app.logger.addHandler(file_handler)
 
             app.logger.setLevel(logging.INFO)
-            app.logger.info('PMA startup')
+            app.logger.info('Kanbanize startup')
 
         return app
