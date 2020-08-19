@@ -2,6 +2,7 @@
 app.db
 *.svg
 .vscode
+migrations/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
